@@ -15,7 +15,10 @@ Tags are used to swich or suggest the formatting of the text. Tags always start 
 For example, to send a message such as `ERROR    Turtle is on fire!` with the word `ERROR` having a red background and the word `fire` in orange, you would use `$beERROR$bf    Turtle is on $f1fire$f0!`.
 ## Implementation
 ### Installing
-TODO
+Type the following command into the terminal
+```
+wget https://raw.githubusercontent.com/Mcrevs/text-generator/main/TF.lua
+```
 ### Importing
 ```lua
 local TF = require("TF")
