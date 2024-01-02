@@ -73,6 +73,7 @@ local last_line = 5
 text:print(term, x, y, first_line, last_line)
 ```
 ## Basic example
+The following two examples do the same thing, with the first one allowing for more controll.
 ```lua
 local TF = require("TF")
 
@@ -83,4 +84,9 @@ local width, height = term.getSize()
 text:split(width)
 
 text:print()
+```
+```lua
+local TF = require("TF")
+
+TF.print("$beHELP$bf The turtle is on $f1fire$f0! Someone get some $f3water$f0 to help put it out.")
 ```

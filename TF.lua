@@ -222,6 +222,11 @@ function Text:print(out, x, y, start_line, end_line)
     end
 end
 
+function Text:getLineCount()
+    return #self.lines
+end
+
+
 function Fill(x, y, width, height, out, bg)
     out = out or term
     bg = bg or "f"
@@ -240,8 +245,14 @@ function Fill(x, y, width, height, out, bg)
     out.setCursorPos(cx, cy)
 end
 
-function Text:getLineCount()
-    return #self.lines
+function Print(text, monitor)
+    text = text or ""
+    monitor = monitor or term
+    local width, height = monitor.getSize()
+
+    local text_obj = Text:new(text)
+    text_obj:split(width)
+    text_obj:print()
 end
 
-return {Text = Text, Fill = Fill}
+return {Text = Text, Fill = Fill, fill = Fill, print = Print}
