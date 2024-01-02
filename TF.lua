@@ -59,18 +59,18 @@ function Text:new(text, o)
     --String interpretation
     text = text or "$feH$f1E$f4L$f5L$fbL$faO$f0 $cfeW$b1O$b4R$b5L$bbD$ba!$c0f $$"
     text = string.gsub(text, "[\n\r]", "$n")
-    local fg = "0"
-    local bg = "f"
+    local fg = "_"
+    local bg = "_"
 
     local i = 1
     while i <= #text do
-        if string.find(string.sub(text, i), "^$f%x") ~= nil then
+        if string.find(string.sub(text, i), "^$f[%x_]") ~= nil then
             fg = string.sub(text, i+2, i+2)
             i = i + 3
-        elseif string.find(string.sub(text, i), "^$b%x") ~= nil then
+        elseif string.find(string.sub(text, i), "^$b[%x_]") ~= nil then
             bg = string.sub(text, i+2, i+2)
             i = i + 3
-        elseif string.find(string.sub(text, i), "^$c%x") ~= nil then
+        elseif string.find(string.sub(text, i), "^$c[%x_][%x_]") ~= nil then
             fg = string.sub(text, i+2, i+2)
             bg = string.sub(text, i+3, i+3)
             i = i + 4
@@ -195,11 +195,13 @@ function Text:split(width, max_backtrack)
     self.lines[#self.lines+1] = line
 end
 
-function Text:print(out, x, y, start_line, end_line)
+function Text:print(out, x, y, start_line, end_line, defult_fg, defult_bg)
     out = out or term
+    defult_fg = defult_fg or colours.toBlit(out.getTextColor())
+    defult_bg = defult_bg or colours.toBlit(out.getBackgroundColor())
 
     local cx, cy = out.getCursorPos()
-    local width, height = out.getSize()
+    local _, height = out.getSize()
     x = x or cx
     y = y or cy
     out.setCursorPos(x, y)
@@ -210,7 +212,9 @@ function Text:print(out, x, y, start_line, end_line)
 
     for i = start_line, end_line do
         local s = self.lines[i] or Line:new("", "", "")
-        out.blit(s.text, s.fg, s.bg)
+        local fg = string.gsub(s.fg, "_", defult_fg)
+        local bg = string.gsub(s.bg, "_", defult_bg)
+        out.blit(s.text, fg, bg)
 
         if y >= height and not lines_specified then
             out.scroll(1)
@@ -255,4 +259,4 @@ function Print(text, monitor)
     text_obj:print()
 end
 
-return {Text = Text, Fill = Fill, fill = Fill, print = Print}
+return {Text = Text, fill = Fill, print = Print}

@@ -3,14 +3,14 @@ EC Computer Craft Create Rails Server Basic Text Formatting System. Shortened to
 # How to use
 ## Formatting
 Tags are used to swich or suggest the formatting of the text. Tags always start with a `$` therefore in order to have a `$` as text you need to type `$$`. The current tags are shown in the table below.
-| Tag        | Purpose                                                                                                                                                          |
-| :--------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `$f{1}`    | Switch the colour of the text to be `{1}` where `{1}` is a hexadecimal digit referring to the colour in the current colour palette.                              |
-| `$b{1}`    | Switch the colour of the background below the current text to be `{1}` where `{1}` is a hexadecimal digit referring to the colour in the current colour palette. |
-| `$c{1}{2}` | Switch the foreground  and background colour of the text to be `{1}` and `{2}` respectively.                                                                     |
-| `$n`       | Force the following text to be on a new. line.                                                                                                                   |
-| `$s`       | Suggest an optional split point, useful for part way through a long word.                                                                                        |
-| `$$`       | Writes a single $ character.                                                                                                                                     |
+| Tag        | Purpose                                                                                                                                                                                                                   |
+| :--------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `$f{1}`    | Switch the colour of the text to be `{1}` where `{1}` is a hexadecimal digit referring to the colour in the current colour palette or a `_` specifying to use the default foreground colour.                              |
+| `$b{1}`    | Switch the colour of the background below the current text to be `{1}` where `{1}` is a hexadecimal digit referring to the colour in the current colour palette or a `_` specifying to use the default background colour. |
+| `$c{1}{2}` | Switch the foreground  and background colour of the text to be `{1}` and `{2}` respectively. Equivelent to `$f{1}$b{2}.`                                                                                                  |
+| `$n`       | Force the following text to be on a new. line.                                                                                                                                                                            |
+| `$s`       | Suggest an optional split point, useful for part way through a long word.                                                                                                                                                 |
+| `$$`       | Writes a single $ character.                                                                                                                                                                                              |
 
 For example, to send a message such as `ERROR    Turtle is on fire!` with the word `ERROR` having a red background and the word `fire` in orange, you would use `$beERROR$bf    Turtle is on $f1fire$f0!`.
 ## Implementation
@@ -71,6 +71,17 @@ local y = 5
 local first_line = 2
 local last_line = 5
 text:print(term, x, y, first_line, last_line)
+```
+To specify which colours should be used as the default, uses current colours if unspecified.
+```lua
+local monitor = term
+local x = 5
+local y = 5
+local first_line = 2
+local last_line = 5
+local fg = "f"
+local bg = "0"
+text:print(term, x, y, first_line, last_line, fg, bg)
 ```
 ## Basic example
 The following two examples do the same thing, with the first one allowing for more controll.
