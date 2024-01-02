@@ -1,21 +1,21 @@
 # ECCCCRSBTFS
-EC Computer Craft Create Rails Server Basic Text Formatting System. Shortened to `TF`, is a bacic text formatting system to be used on the computers for the EC gamers discord server Create Rails server.
+EC Computer Craft Create Rails Server Basic Text Formatting System. Shortened to `TF`, is a basic text formatting system to be used on the computers for the EC gamers discord server Create Rails server.
 # How to use
 ## Formatting
-Tags are used to swich or suggest the formatting of the text. Tags always start with a `$` therefore inorder to have a `$` as text you need to type `$$`. The current tags are shown in the table below.
-| Tag        | Pourpose                                                                                                                                                        |
-| :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `$f{1}`    | Switch the colour of the text to be `{1}` where `{1}` is a hexadecimal digit refering to the colour in the current colour palette.                              |
-| `$b{1}`    | Switch the colour of the background below the current text to be `{1}` where `{1}` is a hexadecimal digit refering to the colour in the current colour palette. |
-| `$c{1}{2}` | Switch the forground and background colour of the text to be `{1}` and `{2}` respectively.                                                                      |
-| `$n`       | Force the following text to be on a new. line.                                                                                                                  |
-| `$s`       | Suggest an optional split point, useful for part way through a long word.                                                                                       |
-| `$$`       | Writes a single $ character.                                                                                                                                    |
+Tags are used to swich or suggest the formatting of the text. Tags always start with a `$` therefore in order to have a `$` as text you need to type `$$`. The current tags are shown in the table below.
+| Tag        | Purpose                                                                                                                                                          |
+| :--------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `$f{1}`    | Switch the colour of the text to be `{1}` where `{1}` is a hexadecimal digit referring to the colour in the current colour palette.                              |
+| `$b{1}`    | Switch the colour of the background below the current text to be `{1}` where `{1}` is a hexadecimal digit referring to the colour in the current colour palette. |
+| `$c{1}{2}` | Switch the foreground  and background colour of the text to be `{1}` and `{2}` respectively.                                                                     |
+| `$n`       | Force the following text to be on a new. line.                                                                                                                   |
+| `$s`       | Suggest an optional split point, useful for part way through a long word.                                                                                        |
+| `$$`       | Writes a single $ character.                                                                                                                                     |
 
 For example, to send a message such as `ERROR    Turtle is on fire!` with the word `ERROR` having a red background and the word `fire` in orange, you would use `$beERROR$bf    Turtle is on $f1fire$f0!`.
 ## Implementation
 ### Installing
-Type the following command into the terminal
+Type the following command into the terminal.
 ```
 wget https://raw.githubusercontent.com/Mcrevs/text-generator/main/TF.lua
 ```
@@ -24,7 +24,7 @@ wget https://raw.githubusercontent.com/Mcrevs/text-generator/main/TF.lua
 local TF = require("TF")
 ```
 ### Creating a `Text` instance
-The example below uses the example message text from the formatting example
+The example below uses the example message text from the formatting example.
 ```lua
 local in_text = "$beERROR$bf    Turtle is on $f1fire$f0!"
 local text = TF.Text:new(in_text)
@@ -56,14 +56,14 @@ To specify what screen to draw the text to, for use with monitors. Drawn at the 
 local monitor = term
 text:print(monitor)
 ```
-To specify the coodinates (top left) to draw the text from.
+To specify the coordinates (top left) to draw the text from.
 ```lua
 local monitor = term
 local x = 5
 local y = 5
 text:print(monitor, x, y)
 ```
-To specify the range of lines of text to be drawn, usful for scrolling.
+To specify the range of lines of text to be drawn, useful for scrolling.
 ```lua
 local monitor = term
 local x = 5
