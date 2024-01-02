@@ -17,7 +17,7 @@ For example, to send a message such as `ERROR    Turtle is on fire!` with the wo
 ### Installing
 Type the following command into the terminal.
 ```
-wget https://raw.githubusercontent.com/Mcrevs/text-generator/main/TF.lua
+wget https://raw.githubusercontent.com/Mcrevs/text-formatter/main/TF.lua
 ```
 ### Importing
 ```lua
