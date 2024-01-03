@@ -383,14 +383,14 @@ function TextBox:print(out)
 end
 
 
-function Print(text, monitor)
+function Print(text, out)
     text = text or ""
-    monitor = monitor or term
-    local width, height = monitor.getSize()
+    out = out or term
+    local width, height = out.getSize()
 
     local text_obj = Text:new(text)
     text_obj:split(width)
-    text_obj:print()
+    text_obj:print(out)
 end
 
 return {Text = Text, TextBox = TextBox, print = Print}
