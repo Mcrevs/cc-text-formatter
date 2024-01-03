@@ -1,5 +1,16 @@
 # ECCCCRSBTFS
 EC Computer Craft Create Rails Server Basic Text Formatting System. Shortened to `TF`, is a basic text formatting system to be used on the computers for the EC gamers discord server Create Rails server.
+
+## Example
+```lua
+local TF = require("TF")
+
+TF.print("$f8Turtle$f_    Mining Turtle           $feOffline")
+TF.print("$f8Turtle$f_    Farming Turtle          $f5Online")
+TF.print("$f8Server$f_    Chat Server             $f5Online")
+```
+![Screenshot of the text produced by the above code](Assets/Example.png)
+
 # How to use
 ## Formatting
 Tags are used to swich or suggest the formatting of the text. Tags always start with a `$` therefore in order to have a `$` as text you need to type `$$`. The current tags are shown in the table below.
