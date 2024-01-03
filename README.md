@@ -94,6 +94,12 @@ local fg = "f"
 local bg = "0"
 text:print(term, x, y, first_line, last_line, fg, bg)
 ```
+### Alternitives
+Use the `print` function like in the example below, or use the `TextBox` class as seen in `Example.lua`.
+```lua
+local in_text = "$beERROR$bf    Turtle is on $f1fire$f0!"
+TF.print(in_text, term)
+```
 ## Basic example
 The following two examples do the same thing, with the first one allowing for more controll.
 ```lua

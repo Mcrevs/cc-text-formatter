@@ -24,6 +24,7 @@
 Symbol = {character = " ", fg = "0", bg = "f", control = false}
 Line = {text = "", fg = "", bg = ""}
 Text = {coloured = {}, lines = {}}
+TextBox = {text = Text, x = 1, y = 1, width = 10, height = 5, fg = "0", bg = "f", current_scroll = 0, confined = false}
 
 function Symbol:new(character, fg, bg, control, o)
     o = o or {}
@@ -254,23 +255,118 @@ function Text:getLineCount()
 end
 
 
-function Fill(x, y, width, height, out, bg)
+function TextBox:new(text, x, y, width, height, fg, bg, confined, scroll, o)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+
+    o.text = Text:new(text)
+    o.x = x or 1
+    o.y = y or 1
+    o.width = width or 10
+    o.height = height or 5
+    o.fg = fg or "0"
+    o.bg = bg or "f"
+    o.confined = confined or false
+    o.current_scroll = scroll or 0
+
+    o.text:split(o.width)
+
+    return o
+end
+
+function TextBox:setPosition(x, y)
+    self.x = x
+    self.y = y
+end
+
+function TextBox:getPosition()
+    return self.x, self.y
+end
+
+function TextBox:setSize(width, height)
+    if width ~= self.width then
+        self.text:split(width)
+    end
+
+    self.width = width
+    self.height = height
+end
+
+function TextBox:getSize()
+    return self.width, self.height
+end
+
+function TextBox:setForegroundColour(colour)
+    if type(colour) == "number" then
+        self.fg = colours.toBlit(colour)
+    else
+        self.fg = colour
+    end
+end
+
+function TextBox:getForegroundColour()
+    return colours.fromBlit(self.fg)
+end
+
+function TextBox:getForegroundBlit()
+    return self.fg
+end
+
+function TextBox:setBackgroundColour(colour)
+    if type(colour) == "number" then
+        self.bg = colours.toBlit(colour)
+    else
+        self.bg = colour
+    end
+end
+
+function TextBox:getBackgroundColour()
+    return colours.fromBlit(self.bg)
+end
+
+function TextBox:getBackgroundBlit()
+    return self.bg
+end
+
+function TextBox:setScroll(scroll)
+    self.current_scroll = scroll
+end
+
+function TextBox:scroll(delta)
+    self.current_scroll = self.current_scroll + delta
+    if self.confined then
+        self.current_scroll = math.max(self.current_scroll, 0)
+        self.current_scroll = math.min(self.current_scroll, self.text:getLineCount() - self.height)
+    end
+end
+
+function TextBox:getScroll()
+    return self.current_scroll
+end
+
+function TextBox:fill(out)
     out = out or term
-    bg = bg or "f"
     local cx, cy = out.getCursorPos()
 
-    local text = string.rep(" ", width)
-    local fg = string.rep("0", width)
-    bg = string.rep(bg, width)
+    local text = string.rep(" ", self.width)
+    local fg = string.rep(self.fg, self.width)
+    local bg = string.rep(self.bg, self.width)
 
-    for i = 0, height - 1 do
-
-        out.setCursorPos(x, y + i)
+    for i = 0, self.height - 1 do
+        out.setCursorPos(self.x, self.y + i)
         out.blit(text, fg, bg)
     end
 
     out.setCursorPos(cx, cy)
 end
+
+function TextBox:print(out)
+    self:fill(out)
+    local last_line = self.height + self.current_scroll
+    self.text:print(out, self.x, self.y, self.current_scroll + 1, last_line, self.fg, self.bg)
+end
+
 
 function Print(text, monitor)
     text = text or ""
@@ -282,4 +378,4 @@ function Print(text, monitor)
     text_obj:print()
 end
 
-return {Text = Text, fill = Fill, print = Print}
+return {Text = Text, TextBox = TextBox, print = Print}
