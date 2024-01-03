@@ -16,5 +16,5 @@ while true do
 
     local event, dir, ex, ey = os.pullEvent("mouse_scroll")
 
-    textBox:scroll(dir)
+    textBox:scroll(dir, ex, ey)
 end

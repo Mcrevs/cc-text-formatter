@@ -329,12 +329,27 @@ function TextBox:getBackgroundBlit()
     return self.bg
 end
 
+function TextBox:contains(check_x, check_y)
+    if check_x < self.x then return false end
+    if check_x >= self.x + self.width then return false end
+    if check_y < self.y then return false end
+    if check_y >= self.y + self.height then return false end
+    return true
+end
+
 function TextBox:setScroll(scroll)
     self.current_scroll = scroll
 end
 
-function TextBox:scroll(delta)
+function TextBox:scroll(delta, mouse_x, mouse_y)
+    if mouse_x ~= nil and mouse_y ~= nil then
+        if not self:contains(mouse_x, mouse_y) then
+            return
+        end
+    end
+
     self.current_scroll = self.current_scroll + delta
+
     if self.confined then
         self.current_scroll = math.min(self.current_scroll, self.text:getLineCount() - self.height)
         self.current_scroll = math.max(self.current_scroll, 0)
