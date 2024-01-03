@@ -336,8 +336,8 @@ end
 function TextBox:scroll(delta)
     self.current_scroll = self.current_scroll + delta
     if self.confined then
-        self.current_scroll = math.max(self.current_scroll, 0)
         self.current_scroll = math.min(self.current_scroll, self.text:getLineCount() - self.height)
+        self.current_scroll = math.max(self.current_scroll, 0)
     end
 end
 
