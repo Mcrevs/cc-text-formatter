@@ -239,9 +239,12 @@ function Text:print(out, x, y, start_line, end_line, defult_fg, defult_bg, start
         local fg = string.gsub(s.fg, "_", defult_fg)
         local bg = string.gsub(s.bg, "_", defult_bg)
 
-        s = string.sub(s, start_char, end_char)
-        fg = string.sub(fg, start_char, end_char)
-        bg = string.sub(bg, start_char, end_char)
+        if start_char ~= nil and end_char ~= nil then
+            local current_end = min(end_char, #s)
+            s = string.sub(s, start_char, current_end)
+            fg = string.sub(fg, start_char, current_end)
+            bg = string.sub(bg, start_char, current_end)
+        end
 
         out.blit(s.text, fg, bg)
 
