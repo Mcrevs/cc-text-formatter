@@ -219,7 +219,7 @@ function Text:split(width, max_backtrack)
     self.lines[#self.lines+1] = line
 end
 
-function Text:print(out, x, y, start_line, end_line, defult_fg, defult_bg)
+function Text:print(out, x, y, start_line, end_line, defult_fg, defult_bg, start_char, end_char)
     out = out or term
     defult_fg = defult_fg or colours.toBlit(out.getTextColor())
     defult_bg = defult_bg or colours.toBlit(out.getBackgroundColor())
@@ -238,6 +238,11 @@ function Text:print(out, x, y, start_line, end_line, defult_fg, defult_bg)
         local s = self.lines[i] or Line:new("", "", "")
         local fg = string.gsub(s.fg, "_", defult_fg)
         local bg = string.gsub(s.bg, "_", defult_bg)
+
+        s = string.sub(s, start_char, end_char)
+        fg = string.sub(fg, start_char, end_char)
+        bg = string.sub(bg, start_char, end_char)
+
         out.blit(s.text, fg, bg)
 
         if y >= height and not lines_specified then
