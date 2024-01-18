@@ -82,7 +82,7 @@ end
 --- Display a coloured string to the terminal at the current cursor position, forground, and background colour.
 --- @param str table The coloured string to be displayed.
 --- @param monitor table | nil The terminal/monitor to display the text to.
-local function writeString(str, monitor)
+local function write(str, monitor)
     assert(isString(str), "Input string must be a valid coloured string.")
 
     monitor = monitor or term
@@ -244,6 +244,7 @@ end
 --- @return table string The coloured string after being padded and aligned.
 local function align(str, width, alignment, padding, fill)
     padding = padding or " "
+    fill = fill or false
 
     assert(isString(str), "Input string must be a valid coloured string.")
     assert(type(width) == "number", "Width must be a number.")
@@ -314,7 +315,6 @@ local function print(str, monitor)
 
     if x ~= 1 then
         scroll_ammount = scroll_ammount + 1
-        y = y + 1
         x = 1
     end
 
@@ -322,7 +322,7 @@ local function print(str, monitor)
     monitor.setCursorPos(x, y)
 
     for i, line in ipairs(lines) do
-        writeString(line, monitor)
+        write(line, monitor)
         monitor.setCursorPos(1, y + i)
     end
 end
@@ -330,7 +330,7 @@ end
 return {
     isString = isString,
     createString = createString,
-    writeString = writeString,
+    write = write,
     length = length,
     sub = sub,
     join = join,
