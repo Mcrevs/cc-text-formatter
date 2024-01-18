@@ -95,4 +95,247 @@ local function writeString(str, monitor)
     monitor.blit(str.string, str.fg, str.bg)
 end
 
-return {isString = isString, createString = createString, writeString = writeString}
+--- Get the length of a coloured string.
+--- @param str table The coloured string to find the length of.
+--- @return number length The length of the sring.
+local function length(str)
+    assert(isString(str), "Input string must be a valid coloured string.")
+
+    return #str.string
+end
+
+--- Get a substring from a coloured string.
+--- @param str table The source coloured string.
+--- @param i number The starting index to get the substring from.
+--- @param j number The ending index to get the substring from.
+--- @return table string The sub string.
+local function sub(str, i, j)
+    assert(isString(str), "Input string must be a valid coloured string.")
+
+    local o = {}
+    o.string = string.sub(str.string, i, j)
+    o.fg = string.sub(str.fg, i, j)
+    o.bg = string.sub(str.bg, i, j)
+    return o
+end
+
+--- Join two coloured strings together.
+--- @param str1 table The first coloured string.
+--- @param str2 table The second coloured string.
+--- @return table string The joined string.
+local function join(str1, str2)
+    assert(isString(str1), "Input string must be a valid coloured string.")
+    assert(isString(str2), "Input string must be a valid coloured string.")
+
+    local o = {}
+    o.string = str1.string .. str2.string
+    o.fg = str1.fg .. str2.fg
+    o.bg = str1.bg .. str2.bg
+    return o
+end
+
+--- Split one string into multiple lines based off of width and some control characters.
+--- @param str table The coloured string to split.
+--- @param width number The maximum widht a line can be.
+--- @param backtrack number | nil The maximum empty space that can be left at the end of a line.
+--- @return table lines A list of coloured strings witch are each individual line.
+local function split(str, width, backtrack)
+    assert(isString(str), "Input string must be a valid coloured string.")
+    assert(type(width) == "number", "Width must be a number.")
+
+    if width > 2 then
+        backtrack = backtrack or math.floor(1.5 * math.sqrt(width - 2))
+    end
+    backtrack = backtrack or 0
+
+    assert(type(backtrack) == "number", "Backtrack must be a number or nil.")
+
+    local lines = {}
+
+    local line = {string = "", fg = "", bg = ""}
+    local line_length = 0
+
+    local join_char = {string = "", fg = "", bg = ""}
+    local join_char_length = 0
+
+    local working_line = {string = "", fg = "", bg = ""}
+    local working_line_length = 0
+
+    local i = 1
+    while i <= #str.string do
+        local good_split = string.find(string.sub(str.string, i, i), "^[%s\n]") ~= nil
+        local delete_on_split = string.find(string.sub(str.string, i, i), "^[%s\n]") ~= nil
+        local require_new_line = string.find(string.sub(str.string, i, i), "^[\n]") ~= nil
+
+        local will_fit = line_length + join_char_length + working_line_length < width
+        local will_fit_if_deleted = line_length + join_char_length + working_line_length <= width and good_split and delete_on_split
+        local can_put_char = will_fit or will_fit_if_deleted
+
+        if can_put_char then
+            if good_split then
+                --Add the working line to the line with the join character
+                line = join(line, join_char)
+                line = join(line, working_line)
+                line_length = line_length + join_char_length + working_line_length
+                working_line = {string = "", fg = "", bg = ""}
+                working_line_length = 0
+                --Update the join_char
+                if delete_on_split then
+                    join_char = sub(str, i, i)
+                    join_char_length = 1
+                else
+                    join_char = {string = "", fg = "", bg = ""}
+                    join_char_length = 0
+                    line = join(line, sub(str, i, i))
+                    line_length = line_length + 1
+                end
+            else
+                working_line = join(working_line, sub(str, i, i))
+                working_line_length = working_line_length + 1
+            end
+        end
+
+        if not (can_put_char) or require_new_line then
+            if working_line_length < backtrack then
+                lines[#lines+1] = line
+
+                line = working_line
+                line_length = working_line_length
+
+                join_char = {string = "", fg = "", bg = ""}
+                join_char_length = 0
+
+                working_line = {string = "", fg = "", bg = ""}
+                working_line_length = 0
+            else
+                line:addSymbol(join_char)
+                line:appendLine(working_line)
+                lines[#lines + 1] = line
+
+                line = {string = "", fg = "", bg = ""}
+                line_length = 0
+
+                join_char = {string = "", fg = "", bg = ""}
+                join_char_length = 0
+
+                working_line = {string = "", fg = "", bg = ""}
+                working_line_length = 0
+            end
+        end
+
+        if can_put_char then
+            i = i + 1
+        end
+    end
+
+    line = join(line, join_char)
+    line = join(line, working_line)
+    lines[#lines + 1] = line
+
+    return lines
+end
+
+--- Add characters before a string to align it within a given width.
+--- @param str table The coloured string to allign.
+--- @param width number The width of the area to align the string to.
+--- @param alignment string | nil The alignment of the string, "left", "centre", "right".
+--- @param padding string | nil The caracter to be used to pad the string if necessary.
+--- @param fill boolean | nil Weather to pad on the right of the string aswell.
+--- @return table string The coloured string after being padded and aligned.
+local function align(str, width, alignment, padding, fill)
+    padding = padding or " "
+
+    assert(isString(str), "Input string must be a valid coloured string.")
+    assert(type(width) == "number", "Width must be a number.")
+    assert(type(padding) == "string", "Padding character must be a string")
+    assert(type(fill) == "boolean", "Fill must be a boolean.")
+
+    local string_length = #str.string
+
+    local padding_length = 0
+    if alignment == "left" or alignment == nil then
+        padding_length = 0
+    elseif alignment == "centre" then
+        padding_length = math.floor((width - string_length) / 2)
+    elseif alignment == "right" then
+        padding_length = width - string_length
+    else
+        error("Alignment must be nil, \"left\", \"right\" or \"Centre\".")
+    end
+
+    local padding_right_length = 0
+    if fill then
+        padding_right_length = width - padding_length
+    end
+
+    local text_padding = string.rep(padding, padding_length)
+    local text_padding_right = string.rep(padding, padding_right_length)
+    local colour_padding = string.rep("_", padding_length)
+    local colour_padding_right = string.rep("_", padding_right_length)
+
+    local o = {}
+    o.string = text_padding .. str.string .. text_padding_right;
+    o.fg = colour_padding .. str.fg .. colour_padding_right;
+    o.bg = colour_padding .. str.bg .. colour_padding_right;
+    return o
+end
+
+--- Add characters before a string to align it within a given width for every line in a list.
+--- @param lines table The list of coloured string to allign.
+--- @param width number The width of the area to align the lines to.
+--- @param alignment string | nil The alignment of the lines, "left", "centre", "right".
+--- @param padding string | nil The caracter to be used to pad the lines if necessary.
+--- @param fill boolean | nil Weather to pad on the right of the text aswell.
+--- @return table lines The list of coloured strings after being padded and aligned.
+local function alignLines(lines, width, alignment, padding, fill)
+    local o = {}
+    for i, line in ipairs(lines) do
+        o[i] = align(line, width, alignment, padding, fill)
+    end
+    return o
+end
+
+--- Print a string to the screen, coloured using the coloured text format.
+--- @param str string The raw string to print.
+--- @param monitor table | nil The terminal/monitor to display the text to.
+local function print(str, monitor)
+    assert(type(str) == "string", "Striing input must be a string.")
+    monitor = monitor or term
+
+    local x, y = monitor.getCursorPos()
+    local width, height = monitor.getSize()
+
+    local coloured_string = createString(str)
+    local lines = split(coloured_string, width)
+    local line_count = #lines
+
+    local scroll_ammount = math.max(y + line_count - height, 0)
+    y = y - scroll_ammount
+
+    if x ~= 1 then
+        scroll_ammount = scroll_ammount + 1
+        y = y + 1
+        x = 1
+    end
+
+    monitor.scroll(scroll_ammount)
+    monitor.setCursorPos(x, y)
+
+    for i, line in ipairs(lines) do
+        writeString(line, monitor)
+        monitor.setCursorPos(1, y + i)
+    end
+end
+
+return {
+    isString = isString,
+    createString = createString,
+    writeString = writeString,
+    length = length,
+    sub = sub,
+    join = join,
+    split = split,
+    align = align,
+    alignLines = alignLines,
+    print = print
+}
