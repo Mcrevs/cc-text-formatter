@@ -1,16 +1,26 @@
-# ECCCCRSBTFS
-EC Computer Craft Create Rails Server Basic Text Formatting System. Shortened to `TF`, is a basic text formatting system to be used on the computers for the EC gamers discord server Create Rails server.
-
-## Example
+# Text Formatter
+Text formatter (tf) is a basic computer craft text formatting system used for creating inline coloured text.
+## Examples
 ```lua
-local TF = require("TF")
+local tf = require("tf")
 
-TF.print("$f8Turtle$f_    Mining Turtle           $feOffline")
-TF.print("$f8Turtle$f_    Farming Turtle          $f5Online")
-TF.print("$f8Server$f_    Chat Server             $f5Online")
+local width, height = term.getSize()
+
+local header = tf.createString("$b7 Current status ")
+header = tf.align(header, width, "centre")
+tf.write(header)
+
+tf.print("$f8Turtle$f_    Mining Turtle           $feOffline")
+tf.print("$f8Turtle$f_    Farming Turtle          $f5Online")
+tf.print("$f8Server$f_    Chat Server             $f5Online")
 ```
-![Screenshot of the text produced by the above code](Assets/Example.png)
+![Screenshot of the text produced by the above code](Assets/Example1.png)
+```lua
+local tf = require("tf")
 
+tf.print("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu $c74elit eu turpis$c__ porta eleifend vitae a tortor.\nQuisque congue ultricies urna, ac tincidunt urna eleifend a.\nVestibulum $c74posuere ipsum sit$c__ amet sem dapibus egestas. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc luctus $c74facilisis felis$c__ sit amet sagittis.\nPellentesque in laoreet augue, eget egestas eros. Duis tincidunt sodales elit eu feugiat. Aenean ut $c74dictum arcu, eget aliquet$c__ ex.")
+```
+![Screenshot of the text produced by the above code](Assets/Example2.png)
 # How to use
 ## Formatting
 Tags are used to swich or suggest the formatting of the text. Tags always start with a `$` therefore in order to have a `$` as text you need to type `$$`. The current tags are shown in the table below.
@@ -19,102 +29,22 @@ Tags are used to swich or suggest the formatting of the text. Tags always start 
 | `$f{1}`    | Switch the colour of the text to be `{1}` where `{1}` is a hexadecimal digit referring to the colour in the current colour palette or a `_` specifying to use the default foreground colour.                              |
 | `$b{1}`    | Switch the colour of the background below the current text to be `{1}` where `{1}` is a hexadecimal digit referring to the colour in the current colour palette or a `_` specifying to use the default background colour. |
 | `$c{1}{2}` | Switch the foreground  and background colour of the text to be `{1}` and `{2}` respectively. Equivelent to `$f{1}$b{2}.`                                                                                                  |
-| `$n`       | Force the following text to be on a new. line.                                                                                                                                                                            |
-| `$s`       | Suggest an optional split point, useful for part way through a long word.                                                                                                                                                 |
 | `$$`       | Writes a single $ character.                                                                                                                                                                                              |
 
 For example, to send a message such as `ERROR    Turtle is on fire!` with the word `ERROR` having a red background and the word `fire` in orange, you would use `$beERROR$bf    Turtle is on $f1fire$f0!`.
-## Implementation
+## Quick start guide
 ### Installing
-Type the following command into the terminal.
+Type the following command into the terminal to download the required lua file.
 ```
 wget https://raw.githubusercontent.com/Mcrevs/text-formatter/main/TF.lua
 ```
 ### Importing
+Add this to the start of your program file to include the library. 
 ```lua
-local TF = require("TF")
+local tf = require("tf")
 ```
-### Creating a `Text` instance
-The example below uses the example message text from the formatting example.
+### Printing
+Print a coloured string accross multiple lines if required.
 ```lua
-local in_text = "$beERROR$bf    Turtle is on $f1fire$f0!"
-local text = TF.Text:new(in_text)
-```
-### Splitting text by lines
-Optional if text can be forced on one line.
-```lua
-local width, height = term.getSize()
-text:split(width)
-```
-To specify how much blank space can be left at the end of a line.
-```lua
-local width, height = term.getSize()
-local blank_space = 5
-text:split(width, blank_space)
-```
-### Getting the line count
-To get the number of lines that the text takes up after it has been split.
-```lua
-text:getLineCount()
-```
-### Drawing text
-To draw the text to the screen.
-```lua
-text:print()
-```
-To specify what screen to draw the text to, for use with monitors. Drawn at the current cursor position.
-```lua
-local monitor = term
-text:print(monitor)
-```
-To specify the coordinates (top left) to draw the text from.
-```lua
-local monitor = term
-local x = 5
-local y = 5
-text:print(monitor, x, y)
-```
-To specify the range of lines of text to be drawn, useful for scrolling.
-```lua
-local monitor = term
-local x = 5
-local y = 5
-local first_line = 2
-local last_line = 5
-text:print(term, x, y, first_line, last_line)
-```
-To specify which colours should be used as the default, uses current colours if unspecified.
-```lua
-local monitor = term
-local x = 5
-local y = 5
-local first_line = 2
-local last_line = 5
-local fg = "f"
-local bg = "0"
-text:print(term, x, y, first_line, last_line, fg, bg)
-```
-### Alternitives
-Use the `print` function like in the example below, or use the `TextBox` class as seen in `Example.lua`.
-```lua
-local in_text = "$beERROR$bf    Turtle is on $f1fire$f0!"
-TF.print(in_text, term)
-```
-## Basic example
-The following two examples do the same thing, with the first one allowing for more controll.
-```lua
-local TF = require("TF")
-
-local in_text = "$beHELP$bf The turtle is on $f1fire$f0! Someone get some $f3water$f0 to help put it out."
-local text = TF.Text:new(in_text)
-
-local width, height = term.getSize()
-text:split(width)
-
-text:print()
-```
-```lua
-local TF = require("TF")
-
-TF.print("$beHELP$bf The turtle is on $f1fire$f0! Someone get some $f3water$f0 to help put it out.")
+tf.print("$feH$f1E$f4L$f5L$fbL$faO$f0 $cfeW$b1O$b4R$b5L$bbD$ba!")
 ```
