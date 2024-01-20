@@ -36,7 +36,7 @@ For example, to send a message such as `ERROR    Turtle is on fire!` with the wo
 ### Installing
 Type the following command into the terminal to download the required lua file.
 ```
-wget https://raw.githubusercontent.com/Mcrevs/text-formatter/main/TF.lua
+wget https://raw.githubusercontent.com/Mcrevs/text-formatter/main/tf.lua
 ```
 ### Importing
 Add this to the start of your program file to include the library. 
