@@ -208,8 +208,8 @@ local function split(str, width, backtrack)
                 working_line = {string = "", fg = "", bg = ""}
                 working_line_length = 0
             else
-                line:addSymbol(join_char)
-                line:appendLine(working_line)
+                line = join(line, join_char)
+                line = join(line, working_line)
                 lines[#lines + 1] = line
 
                 line = {string = "", fg = "", bg = ""}
