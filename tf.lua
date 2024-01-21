@@ -138,8 +138,9 @@ end
 --- @param str table The coloured string to split.
 --- @param width number The maximum widht a line can be.
 --- @param backtrack number | nil The maximum empty space that can be left at the end of a line.
---- @return table lines A list of coloured strings witch are each individual line.
-local function split(str, width, backtrack)
+--- @param max_lines number | nil How many lines to split.
+--- @return table lines, table remaining A list of coloured strings witch are each individual line and optionally any text that was not split.
+local function split(str, width, backtrack, max_lines)
     assert(isString(str), "Input string must be a valid coloured string.")
     assert(type(width) == "number", "Width must be a number.")
 
@@ -148,7 +149,10 @@ local function split(str, width, backtrack)
     end
     backtrack = backtrack or 0
 
+    max_lines = max_lines or -1
+
     assert(type(backtrack) == "number", "Backtrack must be a number or nil.")
+    assert(type(max_lines) == "number", "Lines must be a number.")
 
     local lines = {}
 
@@ -162,7 +166,7 @@ local function split(str, width, backtrack)
     local working_line_length = 0
 
     local i = 1
-    while i <= #str.string do
+    while i <= #str.string and (max_lines < 0 or #lines < max_lines) do
         local good_split = string.find(string.sub(str.string, i, i), "^[%s\n]") ~= nil
         local delete_on_split = string.find(string.sub(str.string, i, i), "^[%s\n]") ~= nil
         local require_new_line = string.find(string.sub(str.string, i, i), "^[\n]") ~= nil
@@ -230,9 +234,12 @@ local function split(str, width, backtrack)
 
     line = join(line, join_char)
     line = join(line, working_line)
-    lines[#lines + 1] = line
+    if max_lines < 0 or #lines < max_lines then
+        lines[#lines + 1] = line
+        line = {string = "", fg = "", bg = ""}
+    end
 
-    return lines
+    return lines, sub(str, i - length(line), length(str))
 end
 
 --- Add characters before a string to align it within a given width.
@@ -306,19 +313,27 @@ local function print(str, monitor)
     local x, y = monitor.getCursorPos()
     local width, height = monitor.getSize()
 
-    local coloured_string = createString(str)
-    local lines = split(coloured_string, width)
-    local line_count = #lines
-
-    local scroll_ammount = math.max(y + line_count - height, 0)
-    y = y - scroll_ammount
-
-    if x ~= 1 then
-        scroll_ammount = scroll_ammount + 1
-        x = 1
+    local backtrack = 0
+    if width > 2 then
+        backtrack = math.floor(1.5 * math.sqrt(width - 2))
     end
 
+    local coloured_string = createString(str)
+    local first_line, remaining = split(coloured_string, width - x, backtrack, 1)
+    local remaining_lines = split(remaining, width, backtrack)
+
+    local lines = {}
+    lines[1] = first_line[1]
+    if length(remaining) ~= 0 then
+        for i, line in ipairs(remaining_lines) do
+            lines[#lines+1] = line
+        end
+    end
+
+    local scroll_ammount = math.max(y + #lines - height, 0)
     monitor.scroll(scroll_ammount)
+    y = y - scroll_ammount
+
     monitor.setCursorPos(x, y)
 
     for i, line in ipairs(lines) do
