@@ -92,7 +92,7 @@ local function write(str, monitor)
     local fg = string.gsub(str.fg, "_", monitor_fg)
     local bg = string.gsub(str.bg, "_", monitor_bg)
 
-    monitor.blit(str.string, str.fg, str.bg)
+    monitor.blit(str.string, fg, bg)
 end
 
 --- Get the length of a coloured string.
