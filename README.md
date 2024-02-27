@@ -33,10 +33,13 @@ Tags are used to swich or suggest the formatting of the text. Tags always start 
 
 For example, to send a message such as `ERROR    Turtle is on fire!` with the word `ERROR` having a red background and the word `fire` in orange, you would use `$beERROR$bf    Turtle is on $f1fire$f0!`.
 ## Quick start guide
+
+For more detailed doccumentaion on every function please see the [wiki](https://github.com/Mcrevs/cc-text-formatter/wiki) page.
+
 ### Installing
 Type the following command into the terminal to download the required lua file.
 ```
-wget https://raw.githubusercontent.com/Mcrevs/text-formatter/main/tf.lua
+wget https://raw.githubusercontent.com/Mcrevs/cc-text-formatter/main/tf.lua
 ```
 ### Importing
 Add this to the start of your program file to include the library. 
